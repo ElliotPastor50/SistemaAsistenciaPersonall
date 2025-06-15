@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import dao.exceptions.NonexistentEntityException;
@@ -19,10 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-/**
- *
- * @author Naomi Alejandra Vega
- */
 public class EmpleadoJpaController implements Serializable {
 
     public EmpleadoJpaController(EntityManagerFactory emf) {
@@ -192,4 +184,20 @@ public class EmpleadoJpaController implements Serializable {
         }
     }
     
+    
+    public Empleado validar(String email, String password){
+    EntityManager em  = getEntityManager();
+        try {
+            Query q = em.createNamedQuery("Empleado.validar");
+            q.setParameter("correo", email);
+            q.setParameter("contrasena", password);
+            List<Empleado> empleado = q.getResultList();
+            if(!empleado.isEmpty()){
+                return empleado.get(0);
+            }
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 }

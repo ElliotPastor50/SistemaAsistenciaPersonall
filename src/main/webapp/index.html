@@ -1,10 +1,68 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+    <!-- SB Admin 2 desde CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-primary">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card o-hidden border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <h4 class="text-center mb-4">Iniciar Sesión</h4>
+                    <form id="formLogin">
+                        <div class="form-group">
+                            <label for="correo">Correo electrónico</label>
+                            <input type="email" class="form-control" id="correo" name="correo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña</label>
+                            <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                    </form>
+                    <div id="mensaje" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+document.getElementById("formLogin").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("login", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        const mensaje = document.getElementById("mensaje");
+        if (data.exito) {
+            mensaje.innerHTML = `<div class="alert alert-success">¡Bienvenido, ${data.nombre}!</div>`;
+            // Redirige si quieres
+            setTimeout(() => {
+                window.location.href = "inicio.html"; // o dashboard.jsp
+            }, 1500);
+        } else {
+            mensaje.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Error al conectarse al servidor</div>`;
+    });
+});
+</script>
+
+</body>
 </html>
+
