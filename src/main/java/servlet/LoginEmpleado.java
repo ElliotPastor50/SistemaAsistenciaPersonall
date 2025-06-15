@@ -2,6 +2,7 @@ package servlet;
 
 import dao.EmpleadoJpaController;
 import dto.Empleado;
+import java.io.BufferedReader;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,15 +27,24 @@ public class LoginEmpleado extends HttpServlet {
             throws ServletException, IOException {
 
         resp.setContentType("application/json");
+        
+        BufferedReader reader = req.getReader();
+        StringBuilder jsonBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            jsonBuilder.append(line);
+        }
+        JSONObject jsonRequest = new JSONObject(jsonBuilder.toString());
         JSONObject json = new JSONObject();
 
         try {
-            String correo = req.getParameter("correo");
-            String contrasena = req.getParameter("contrasena");
-
+            String correo = jsonRequest.getString("correo");
+            String contrasena = jsonRequest.getString("contrasena");
+            System.out.println("Parametros: " + correo + " : "+ contrasena);
             Empleado encontrado = empleadoJpa.validar(correo, contrasena);
-
+            
             if (encontrado != null) {
+                System.out.println("Empleado encontrado: "+ encontrado.getNombre());
                 HttpSession session = req.getSession(true);
                 session.setAttribute("empleado", encontrado);
                 json.put("exito", true);
