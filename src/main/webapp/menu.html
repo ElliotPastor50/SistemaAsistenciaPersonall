@@ -7,53 +7,130 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-primary">
-
-<div class="container mt-5">
-    <div class="text-center text-white mb-4">
-        <h1>Sistema de Asistencia</h1>
-        <p>Selecciona una oficina o cierra sesión</p>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg p-4">
-                <div class="text-center mb-4">
-                    <h4 class="text-dark">Oficinas Disponibles</h4>
-                </div>
-                <div class="d-grid gap-3">
-                    <a href="oficinaA.html" class="btn btn-primary btn-lg">
-                        <i class="fas fa-building me-2"></i> Oficina A
-                    </a>
-                    <a href="oficinaB.html" class="btn btn-success btn-lg">
-                        <i class="fas fa-building me-2"></i> Oficina B
-                    </a>
-                    <a href="oficinaC.html" class="btn btn-warning btn-lg">
-                        <i class="fas fa-building me-2"></i> Oficina C
-                    </a>
-                    <hr>
-                    <button class="btn btn-danger btn-lg" onclick="cerrarSesion()">
-                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión
+    <!-- Barra superior -->
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Sistema de Asistencia</span>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">
+                        <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
                     </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mt-5">
+        <div class="text-center text-white mb-4">
+            <h1>Sistema de Asistencia</h1>
+            <p>Selecciona una oficina</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-lg p-4">
+                    <div class="text-center mb-4">
+                        <h4 class="text-dark">Oficinas Disponibles</h4>
+                    </div>
+
+                    <div class="row text-center justify-content-center mb-4">
+                        <div class="col-md-4 mb-3">
+                            <a href="oficinaA.html" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-building me-2"></i> Oficina A
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="oficinaB.html" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-building me-2"></i> Oficina B
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="oficinaC.html" class="btn btn-warning btn-lg w-100">
+                                <i class="fas fa-building me-2"></i> Oficina C
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center mb-3">
+                        <h2 class="text-dark">Tabla General de Eventos</h2>
+                    </div>
+                    <div id="tabla-eventos" class="table-responsive text-center">
+                        <p>Cargando datos...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<script>
-function cerrarSesion() {
-    fetch("logout", { method: "POST" })
-        .then(() => {
-            window.location.href = "index.html";
-        })
-        .catch(error => {
-            console.error("Error cerrando sesión:", error);
-            alert("No se pudo cerrar sesión.");
-        });
-}
-</script>
+    <!-- Scripts -->
+    <script>
+        function cerrarSesion() {
+            fetch("logout", { method: "POST" })
+                .then(() => {
+                    window.location.href = "index.html";
+                })
+                .catch(error => {
+                    console.error("Error cerrando sesión:", error);
+                    alert("No se pudo cerrar sesión.");
+                });
+        }
+    </script>
 
-<script src="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
+    <script>
+        function construirTabla(eventos) {
+            let tabla = `
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Empleado</th>
+                            <th>Oficina</th>
+                            <th>Tipo de Evento</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Reloj Lógico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const evento of eventos) {
+                tabla += `
+                    <tr>
+                        <td>${evento.empleado}</td>
+                        <td>${evento.oficina}</td>
+                        <td>${evento.tipoEvento}</td>
+                        <td>${evento.fecha}</td>
+                        <td>${evento.hora}</td>
+                        <td>${evento.relojLogico}</td>
+                    </tr>
+                `;
+            }
+
+            tabla += `</tbody></table>`;
+            return tabla;
+        }
+
+        function cargarEventos() {
+            fetch('eventos')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('tabla-eventos').innerHTML = construirTabla(data);
+                })
+                .catch(err => {
+                    document.getElementById('tabla-eventos').innerHTML = '<p>Error al cargar eventos 😢</p>';
+                    console.error('Error al cargar eventos:', err);
+                });
+        }
+
+        cargarEventos();
+        setInterval(cargarEventos, 3000);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/js/sb-admin-2.min.js"></script>
 </body>
 </html>
