@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <form id="formEvento">
                         <input type="hidden" name="idOficina" id="idOficina" value="3"/>
-                        <input type="hidden" name="idEmpleado" id="idEmpleado" value="${sessionScope.idEmpleado}"/>
+                        <input type="hidden" name="idEmpleado" id="idEmpleado"/>
 
                         <div class="form-group">
                             <label for="tipo">Tipo de Evento</label>
@@ -155,7 +155,16 @@
                 cargarEventos();
             };
 
+            window.addEventListener("DOMContentLoaded", function () {
+                fetch("datosUsuario")
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById("idEmpleado").value = data.idEmpleado;
+                        })
+                        .catch(err => console.error("Error al cargar datos de sesión:", err));
+            });
 
         </script>
     </body>
 </html>
+
