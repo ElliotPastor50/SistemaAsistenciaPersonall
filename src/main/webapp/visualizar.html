@@ -1,15 +1,97 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visualizar Eventos - Lamport</title>
+  <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.0.7/css/sb-admin-2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Vis.js -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+  <link href="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.css" rel="stylesheet" />
+
+  <style>
+    #graph {
+      width: 100%;
+      height: 600px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body class="bg-gradient-info">
+
+  <div class="container mt-5">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h3 class="m-0 font-weight-bold">Visualización de Eventos con Relojes de Lamport</h3>
+      </div>
+      <div class="card-body">
+        <div id="graph"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Obtener eventos y construir el grafo
+    fetch("listarEventos")
+      .then(res => res.json())
+      .then(data => {
+        const nodes = [];
+        const edges = [];
+
+        // Crear nodos
+        data.forEach((evento, index) => {
+          nodes.push({
+            id: index,
+            label: `${evento.tipoEvento}\n${evento.nombreEmpleado}\n${evento.nombreOficina}\n${evento.fecha} ${evento.hora}`,
+            title: `Reloj lógico: ${evento.relojLogico}`,
+            shape: "box",
+            group: evento.nombreOficina
+          });
+        });
+
+        // Crear aristas entre eventos según el orden de reloj lógico
+        for (let i = 1; i < data.length; i++) {
+          edges.push({
+            from: i - 1,
+            to: i,
+            arrows: 'to',
+            label: `→ ${data[i].relojLogico}`,
+            font: { align: "middle" }
+          });
+        }
+
+        const container = document.getElementById("graph");
+        const networkData = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+        const options = {
+          layout: { hierarchical: false },
+          nodes: {
+            borderWidth: 1,
+            shape: "box",
+            color: {
+              border: "#2c3e50",
+              background: "#3498db",
+              highlight: { border: "#e74c3c", background: "#f1c40f" }
+            },
+            font: { color: "#ffffff" }
+          },
+          edges: {
+            color: "#7f8c8d"
+          },
+          physics: {
+            enabled: true,
+            solver: "forceAtlas2Based",
+            stabilization: { iterations: 150 }
+          }
+        };
+
+        new vis.Network(container, networkData, options);
+      })
+      .catch(err => {
+        console.error("Error al cargar eventos:", err);
+        document.getElementById("graph").innerHTML = `<p class="text-danger">No se pudieron cargar los eventos</p>`;
+      });
+  </script>
+</body>
 </html>
+
