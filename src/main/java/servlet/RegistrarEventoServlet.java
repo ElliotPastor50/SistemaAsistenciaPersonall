@@ -28,7 +28,7 @@ public class RegistrarEventoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             response.setContentType("application/json");
-            
+
             // Leer JSON del request
             BufferedReader reader = request.getReader();
             StringBuilder jsonBuilder = new StringBuilder();
@@ -42,48 +42,35 @@ public class RegistrarEventoServlet extends HttpServlet {
             int idOficina = jsonRequest.getInt("idOficina");
             int idEmpleado = jsonRequest.getInt("idEmpleado");
 
-            // Obtener datos actuales del servidor
-            Date ahora = new Date(); // Fecha y hora actuales
+            Date ahora = new Date();
 
-            // Obtener entidad oficina y actualizar su reloj lógico
+            // 1. Obtener oficina que genera el evento
             Oficina oficinaActual = oficinaController.findOficina(idOficina);
-            int relojActual = oficinaActual.getRelojLogico();
-            int nuevoReloj = relojActual + 1;
+
+            // 2. Incrementar su reloj lógico local
+            int nuevoReloj = oficinaActual.getRelojLogico() + 1;
             oficinaActual.setRelojLogico(nuevoReloj);
             oficinaController.edit(oficinaActual);
 
-            // Sincronizar otras oficinas
-            List<Oficina> todasLasOficinas = oficinaController.findOficinaEntities();
-            for (Oficina otra : todasLasOficinas) {
-                if (!otra.getIdOficina().equals(oficinaActual.getIdOficina())) {
-                    int sincronizado = Math.max(otra.getRelojLogico(), nuevoReloj) + 1;
-                    otra.setRelojLogico(sincronizado);
-                    oficinaController.edit(otra);
-                }
-            }
+            // 3. Determinar tipo de evento
+            Evento ultimoEvento = eventoController.ultimoEvento(idEmpleado);
+            String tipo = (ultimoEvento == null || "SALIDA".equals(ultimoEvento.getTipoEvento()))
+                    ? "ENTRADA" : "SALIDA";
 
-            // Determinar tipo de evento en base al último evento del empleado
-            Evento ultimoEvento = eventoController.ultimoEvento(idEmpleado); // nuevo método
-            String tipo;
-            if (ultimoEvento == null || "SALIDA".equals(ultimoEvento.getTipoEvento())) {
-                tipo = "ENTRADA";
-            } else {
-                tipo = "SALIDA";
-            }
-
-            // Crear evento
+            // 4. Crear evento
             Empleado empleado = empleadoController.findEmpleado(idEmpleado);
+
             Evento evento = new Evento();
             evento.setTipoEvento(tipo);
             evento.setFecha(ahora);
             evento.setHora(ahora);
-            evento.setRelojLogico(nuevoReloj);
+            evento.setRelojLogico(nuevoReloj); // solo de esa oficina
             evento.setIdOficina(oficinaActual);
             evento.setIdEmpleado(empleado);
 
             eventoController.create(evento);
 
-            // Enviar respuesta
+            // 5. Respuesta
             JSONObject json = new JSONObject();
             json.put("status", "ok");
             json.put("mensaje", tipo + " registrada correctamente.");
@@ -100,5 +87,5 @@ public class RegistrarEventoServlet extends HttpServlet {
             response.getWriter().write(error.toString());
         }
     }
-    
+
 }

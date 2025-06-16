@@ -100,7 +100,6 @@
                 const datos = {
                     idOficina: document.getElementById("idOficina").value,
                     idEmpleado: document.getElementById("idEmpleado").value,
-                    tipo: document.getElementById("tipo").value,
                     fecha: obtenerFechaActual(),
                     hora: obtenerHoraActual()
                 };
@@ -113,9 +112,11 @@
                         .then(res => res.json())
                         .then(json => {
                             document.getElementById("respuesta").innerText = json.mensaje;
+                            document.getElementById("tipoEvento").innerText = json.tipo; // <-- usa el tipo retornado
+                            document.getElementById("tipo").value = json.tipo;            // <-- actualiza el input hidden
                             cargarEventos();
-                            actualizarEstadoEvento(); // actualiza el tipo mostrado
                         })
+                        
                         .catch(error => {
                             document.getElementById("respuesta").innerText = "Error al registrar: " + error.toString();
                         });
