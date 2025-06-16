@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
+/*
 @WebServlet("/registrarEvento")
 public class RegistrarEventoServlet extends HttpServlet {
 
@@ -90,6 +91,92 @@ public class RegistrarEventoServlet extends HttpServlet {
             JSONObject json = new JSONObject();
             json.put("status", "ok");
             json.put("mensaje", "Evento registrado correctamente.");
+            json.put("relojLogico", nuevoReloj);
+            response.getWriter().write(json.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            JSONObject error = new JSONObject();
+            error.put("status", "error");
+            error.put("mensaje", "Error al registrar evento: " + e.getMessage());
+            response.getWriter().write(error.toString());
+        }
+    }
+}
+*/
+
+@WebServlet("/registrarEvento")
+public class RegistrarEventoServlet extends HttpServlet {
+
+    private final EventoJpaController eventoController = new EventoJpaController();
+    private final OficinaJpaController oficinaController = new OficinaJpaController();
+    private final EmpleadoJpaController empleadoController = new EmpleadoJpaController();
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            response.setContentType("application/json");
+            
+            // Leer JSON del request
+            BufferedReader reader = request.getReader();
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+
+            JSONObject jsonRequest = new JSONObject(jsonBuilder.toString());
+
+            int idOficina = jsonRequest.getInt("idOficina");
+            int idEmpleado = jsonRequest.getInt("idEmpleado");
+
+            // Obtener datos actuales del servidor
+            Date ahora = new Date(); // Fecha y hora actuales
+
+            // Obtener entidad oficina y actualizar su reloj lógico
+            Oficina oficinaActual = oficinaController.findOficina(idOficina);
+            int relojActual = oficinaActual.getRelojLogico();
+            int nuevoReloj = relojActual + 1;
+            oficinaActual.setRelojLogico(nuevoReloj);
+            oficinaController.edit(oficinaActual);
+
+            // Sincronizar otras oficinas
+            List<Oficina> todasLasOficinas = oficinaController.findOficinaEntities();
+            for (Oficina otra : todasLasOficinas) {
+                if (!otra.getIdOficina().equals(oficinaActual.getIdOficina())) {
+                    int sincronizado = Math.max(otra.getRelojLogico(), nuevoReloj) + 1;
+                    otra.setRelojLogico(sincronizado);
+                    oficinaController.edit(otra);
+                }
+            }
+
+            // Determinar tipo de evento en base al último evento del empleado
+            Evento ultimoEvento = eventoController.ultimoEvento(idEmpleado); // nuevo método
+            String tipo;
+            if (ultimoEvento == null || "SALIDA".equals(ultimoEvento.getTipoEvento())) {
+                tipo = "ENTRADA";
+            } else {
+                tipo = "SALIDA";
+            }
+
+            // Crear evento
+            Empleado empleado = empleadoController.findEmpleado(idEmpleado);
+            Evento evento = new Evento();
+            evento.setTipoEvento(tipo);
+            evento.setFecha(ahora);
+            evento.setHora(ahora);
+            evento.setRelojLogico(nuevoReloj);
+            evento.setIdOficina(oficinaActual);
+            evento.setIdEmpleado(empleado);
+
+            eventoController.create(evento);
+
+            // Enviar respuesta
+            JSONObject json = new JSONObject();
+            json.put("status", "ok");
+            json.put("mensaje", tipo + " registrada correctamente.");
+            json.put("tipo", tipo);
             json.put("relojLogico", nuevoReloj);
             response.getWriter().write(json.toString());
 

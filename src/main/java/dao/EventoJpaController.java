@@ -12,6 +12,7 @@ import dto.Oficina;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 
 public class EventoJpaController implements Serializable {
@@ -199,5 +200,18 @@ public class EventoJpaController implements Serializable {
             em.close();
         }
     }
+
+    public Evento ultimoEvento(int idEmpleado) {
+    EntityManager em = getEntityManager();
+    try {
+        return em.createQuery("SELECT e FROM Evento e WHERE e.idEmpleado.idEmpleado = :id ORDER BY e.fecha DESC, e.hora DESC", Evento.class)
+                 .setParameter("id", idEmpleado)
+                 .setMaxResults(1)
+                 .getSingleResult();
+    } catch (NoResultException e) {
+        return null;
+    } finally {
+        em.close();
+    }    }
 
 }
