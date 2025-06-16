@@ -1,15 +1,86 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
+<html lang="es">
     <head>
-        <title>TODO supply a title</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Visualización de Asistencia</title>
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            th, td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: center;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
     </head>
     <body>
-        <div>TODO write content</div>
+        <h2 id="titulo">Tabla de asistencia</h2>
+
+        <table id="tabla-empleados">
+            <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Oficina</th>
+                    <th>Tipo</th>
+                    <th>Hora</th>
+                    <th>Lamport</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se insertan los datos dinámicamente -->
+            </tbody>
+        </table>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const params = new URLSearchParams(window.location.search);
+                const oficina = params.get("oficina"); // ej. oficina=1
+
+                const titulo = document.getElementById("titulo");
+                const tablaBody = document.querySelector("#tabla-empleados tbody");
+
+                // Determinar endpoint según el modo
+                const endpoint = oficina
+                        ? `/eventos?oficina=${oficina}`
+                        : `/eventos-generales`;
+
+                if (oficina) {
+                    titulo.textContent = `Tabla de Asistencia - Oficina ${oficina}`;
+                }
+
+                // Función para obtener y renderizar la tabla
+                const actualizarTabla = async () => {
+                    try {
+                        const response = await fetch(endpoint);
+                        const datos = await response.json();
+
+                        // Ordenar por reloj de Lamport
+                        datos.sort((a, b) => a.relojLamport - b.relojLamport);
+
+                        // Renderizar
+                        tablaBody.innerHTML = datos.map(evento => `
+                  <tr>
+                    <td>${evento.nombreEmpleado}</td>
+                    <td>${evento.nombreOficina}</td>
+                    <td>${evento.tipo}</td>
+                    <td>${evento.timestamp}</td>
+                    <td>${evento.relojLamport}</td>
+                  </tr>
+                `).join('');
+                    } catch (err) {
+                        console.error("Error al obtener datos:", err);
+                        tablaBody.innerHTML = "<tr><td colspan='5'>Error cargando datos</td></tr>";
+                    }
+                };
+
+                actualizarTabla(); // Primer render
+                setInterval(actualizarTabla, 3000); // Auto actualización
+            });
+        </script>
     </body>
 </html>
