@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 @WebServlet(name = "LoginEmpleado", urlPatterns = {"/login"})
@@ -57,7 +58,7 @@ public class LoginEmpleado extends HttpServlet {
                 json.put("error", "Credenciales incorrectas");
             }
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             json.put("exito", false);
             json.put("error", "Error en servidor: " + e.getMessage());
         }

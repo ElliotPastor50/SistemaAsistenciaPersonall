@@ -24,10 +24,31 @@ public class ListarEventosServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
 
         try {
-            EventoJpaController eventoDAO = new EventoJpaController();
-            List<Evento> eventos = eventoDAO.ordenarPorRelojLogico();
+            String accion = request.getParameter("accion");
+            String idEmpleadoStr = request.getParameter("idEmpleado");
 
-            // Obtener parámetro ?oficina=
+            EventoJpaController eventoDAO = new EventoJpaController();
+
+            // responder a accion=ultimo
+            if ("ultimo".equalsIgnoreCase(accion) && idEmpleadoStr != null) {
+                int idEmpleado = Integer.parseInt(idEmpleadoStr);
+                Evento ultimo = eventoDAO.ultimoEvento(idEmpleado);
+
+                JSONObject json = new JSONObject();
+
+                if (ultimo != null) {
+                    json.put("tipo", ultimo.getTipoEvento());
+                    json.put("hora", new SimpleDateFormat("HH:mm").format(ultimo.getHora()));
+                } else {
+                    json.put("tipo", "NINGUNO");
+                }
+
+                response.getWriter().print(json.toString());
+                return;
+            }
+
+            // === Lógica existente para listar eventos ===
+            List<Evento> eventos = eventoDAO.ordenarPorRelojLogico();
             String oficinaParam = request.getParameter("oficina");
             Integer idOficinaFiltro = null;
             if (oficinaParam != null && !oficinaParam.isEmpty()) {
@@ -40,7 +61,6 @@ public class ListarEventosServlet extends HttpServlet {
                 }
             }
 
-            // Formateadores
             SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
             SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
 
@@ -50,7 +70,7 @@ public class ListarEventosServlet extends HttpServlet {
                 if (idOficinaFiltro != null) {
                     Oficina oficina = evento.getIdOficina();
                     if (oficina == null || !oficina.getIdOficina().equals(idOficinaFiltro)) {
-                        continue; // Filtrar
+                        continue;
                     }
                 }
 
@@ -70,10 +90,11 @@ public class ListarEventosServlet extends HttpServlet {
 
             response.getWriter().print(arregloJson.toString());
 
-        } catch (IOException | JSONException ex) {
+        } catch (IOException | NumberFormatException | JSONException ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().print("{\"error\":\"Error al obtener los eventos.\"}");
             ex.printStackTrace();
         }
     }
+
 }

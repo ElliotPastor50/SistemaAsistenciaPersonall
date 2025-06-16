@@ -4,74 +4,56 @@
         <meta charset="UTF-8" />
         <title>Visualización de Asistencia y Eventos</title>
 
-        <!-- Estilos generales -->
+        <!-- Bootstrap y estilo base -->
         <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.0.7/css/sb-admin-2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
         <!-- Vis.js -->
-        <script type="text/javascript" src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+        <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
         <link href="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.css" rel="stylesheet" />
 
-        <style>
-            table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-            th, td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: center;
-            }
-            th {
-                background-color: #f2f2f2;
-            }
-            #graph {
-                width: 100%;
-                height: 600px;
-                border: 1px solid lightgray;
-            }
-        </style>
+        <!-- Tu archivo de estilos -->
+        <link href="style.css" rel="stylesheet" />
     </head>
     <body class="bg-gradient-info">
 
         <div class="container mt-5">
 
-            <!-- Tabla de asistencia -->
-            <div class="card shadow mb-5">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="m-0 font-weight-bold" id="titulo">Tabla de Asistencia</h3>
+            <!-- CARD TABLA ASISTENCIA -->
+            <div class="card shadow-lg mb-5 uwu-shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="font-weight-bold" id="titulo">Tabla de Asistencia</h3>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="tabla-empleados">
-                            <thead>
-                                <tr>
-                                    <th>Empleado</th>
-                                    <th>Oficina</th>
-                                    <th>Tipo</th>
-                                    <th>Hora</th>
-                                    <th>Lamport</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Aquí se insertan los datos dinámicamente -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="card-body table-responsive">
+                    <table id="tabla-empleados" class="table table-bordered table-hover table-striped align-middle text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Oficina</th>
+                                <th>Tipo</th>
+                                <th>Hora</th>
+                                <th>Lamport</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos insertados dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Grafo de eventos -->
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h3 class="m-0 font-weight-bold">Visualización de Eventos con Relojes de Lamport</h3>
+            <!-- CARD GRAFO -->
+            <div class="card shadow-lg uwu-shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="font-weight-bold">Visualización de Eventos con Relojes de Lamport</h3>
                 </div>
                 <div class="card-body">
-                    <div id="graph"></div>
+                    <div id="graph" style="height: 600px;"></div>
                 </div>
             </div>
-
         </div>
+
+
 
         <!-- Script para la tabla -->
         <script>
@@ -114,7 +96,7 @@
                 setInterval(actualizarTabla, 3000);
             });
         </script>
- 
+
         <!-- Script para el grafo -->
         <script>
             fetch("eventos")
@@ -124,7 +106,7 @@
                         const edges = [];
 
                         data.forEach((evento, index) => {
-                            console.log(evento); 
+                            console.log(evento);
                             nodes.push({
                                 id: index,
                                 label: `${evento.tipo}\n${evento.nombreEmpleado}\n${evento.nombreOficina}\n${evento.fecha} ${evento.hora}`,
@@ -175,4 +157,4 @@
         </script>
 
     </body>
-</html>
+</html>s
