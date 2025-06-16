@@ -196,5 +196,16 @@ public class EventoJpaController implements Serializable {
             em.close();
         }
     }
+    
+    public List<Evento> ordenarPorRelojLogico(){
+    EntityManager em = getEntityManager();
+        try {
+            Query q = em.createNamedQuery("Evento.findAllOrderRL");
+            List<Evento> eventos = q.getResultList();
+            return eventos;
+        } finally {
+            em.close();
+        }
+    }
 
 }

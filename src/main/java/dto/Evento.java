@@ -28,7 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Evento.findByTipoEvento", query = "SELECT e FROM Evento e WHERE e.tipoEvento = :tipoEvento"),
     @NamedQuery(name = "Evento.findByHora", query = "SELECT e FROM Evento e WHERE e.hora = :hora"),
     @NamedQuery(name = "Evento.findByFecha", query = "SELECT e FROM Evento e WHERE e.fecha = :fecha"),
-    @NamedQuery(name = "Evento.findByRelojLogico", query = "SELECT e FROM Evento e WHERE e.relojLogico = :relojLogico")})
+    @NamedQuery(name = "Evento.findByRelojLogico", query = "SELECT e FROM Evento e WHERE e.relojLogico = :relojLogico"),
+    @NamedQuery(name = "Evento.findAllOrderRL", query = "SELECT e FROM Evento e ORDER BY e.relojLogico ASC")})
 public class Evento implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -158,5 +159,5 @@ public class Evento implements Serializable {
     public String toString() {
         return "dto.Evento[ idEvento=" + idEvento + " ]";
     }
-    
+
 }
