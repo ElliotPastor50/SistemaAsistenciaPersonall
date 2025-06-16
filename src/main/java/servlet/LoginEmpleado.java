@@ -34,13 +34,14 @@ public class LoginEmpleado extends HttpServlet {
         while ((line = reader.readLine()) != null) {
             jsonBuilder.append(line);
         }
+        
         JSONObject jsonRequest = new JSONObject(jsonBuilder.toString());
         JSONObject json = new JSONObject();
 
         try {
             String correo = jsonRequest.getString("correo");
             String contrasena = jsonRequest.getString("contrasena");
-            System.out.println("Parametros: " + correo + " : "+ contrasena);
+            
             Empleado encontrado = empleadoJpa.validar(correo, contrasena);
             
             if (encontrado != null) {
