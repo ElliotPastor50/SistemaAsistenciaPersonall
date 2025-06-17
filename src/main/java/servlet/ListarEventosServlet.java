@@ -33,8 +33,18 @@ public class ListarEventosServlet extends HttpServlet {
 
             // responder a accion=ultimo
             if ("ultimo".equalsIgnoreCase(accion) && idEmpleadoStr != null) {
+                String idOficinaStr = request.getParameter("idOficina");
+
+                if (idOficinaStr == null) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().print("{\"error\":\"Falta el ID de oficina.\"}");
+                    return;
+                }
+
                 int idEmpleado = Integer.parseInt(idEmpleadoStr);
-                Evento ultimo = eventoDAO.ultimoEvento(idEmpleado);
+                int idOficina = Integer.parseInt(idOficinaStr);
+
+                Evento ultimo = eventoDAO.ultimoEvento(idEmpleado, idOficina);
 
                 JSONObject json = new JSONObject();
 

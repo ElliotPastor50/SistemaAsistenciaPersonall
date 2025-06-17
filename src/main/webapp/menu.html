@@ -1,69 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Menú Principal</title>
-        <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    </head>
-    <body class="bg-gradient-primary">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Principal</title>
 
-        <!-- Barra superior -->
-        <nav class="navbar navbar-expand navbar-dark bg-dark">
-            <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1">Sistema de Asistencia</span>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">
-                            <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+    <!-- Estilos base -->
+    <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet"> 
 
-        <!-- Contenido principal -->
-        <div class="container mt-5">
-            <div class="text-center text-white mb-4">
-                <h1>Sistema de Asistencia</h1>
-                <p>Selecciona una oficina</p>
-            </div>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="bg-gradient-primary">
 
-            <div class="row justify-content-center">
-                <div class="col-md-10">
-                    <div class="card shadow-lg p-4">
-                        <div class="text-center mb-4">
-                            <h4 class="text-dark">Oficinas Disponibles</h4>
+    <!-- Barra superior -->
+    <nav class="navbar navbar-expand navbar-dark bg-dark shadow">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-clock me-2"></i> Sistema de Asistencia
+            </span>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">
+                        <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mt-5">
+        <div class="text-center text-white mb-4">
+            <h1 class="display-5">¡Bienvenid@!</h1>
+            <p class="lead">Selecciona una oficina para gestionar la asistencia</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card uwu-shadow border-0 p-4">
+
+                    <div class="text-center mb-4">
+                        <h4 class="text-dark">Oficinas Disponibles</h4>
+                    </div>
+
+                    <div class="row text-center justify-content-center mb-4">
+                        <div class="col-md-4 mb-3">
+                            <a href="oficinaA.html" class="btn btn-primary btn-lg w-100 shadow-sm">
+                                <i class="fas fa-building me-2"></i> Oficina A
+                            </a>
                         </div>
-
-                        <div class="row text-center justify-content-center mb-4">
-                            <div class="col-md-4 mb-3">
-                                <a href="oficinaA.html" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-building me-2"></i> Oficina A
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="oficinaB.html" class="btn btn-success btn-lg w-100">
-                                    <i class="fas fa-building me-2"></i> Oficina B
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="oficinaC.html" class="btn btn-warning btn-lg w-100">
-                                    <i class="fas fa-building me-2"></i> Oficina C
-                                </a>
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="oficinaB.html" class="btn btn-success btn-lg w-100 shadow-sm">
+                                <i class="fas fa-building me-2"></i> Oficina B
+                            </a>
                         </div>
-                        <hr class="my-4">
-
-                        <div class="text-center">
-                            <a href="visualizar.html" class="btn btn-info btn-lg w-100">
-                                <i class="fas fa-chart-bar me-2"></i>Visualizar General
+                        <div class="col-md-4 mb-3">
+                            <a href="oficinaC.html" class="btn btn-warning btn-lg w-100 shadow-sm text-dark">
+                                <i class="fas fa-building me-2"></i> Oficina C
                             </a>
                         </div>
                     </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <a href="visualizar.html" class="btn btn-info btn-lg w-100 shadow-sm">
+                            <i class="fas fa-chart-bar me-2"></i> Visualizar General
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>
+    </div>
         
         <script>
             function cerrarSesion() {

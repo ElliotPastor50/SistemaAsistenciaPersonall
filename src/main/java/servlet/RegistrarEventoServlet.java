@@ -53,7 +53,7 @@ public class RegistrarEventoServlet extends HttpServlet {
             oficinaController.edit(oficinaActual);
 
             // 3. Determinar tipo de evento
-            Evento ultimoEvento = eventoController.ultimoEvento(idEmpleado);
+            Evento ultimoEvento = eventoController.ultimoEvento(idEmpleado, idOficina);
             String tipo = (ultimoEvento == null || "SALIDA".equals(ultimoEvento.getTipoEvento()))
                     ? "ENTRADA" : "SALIDA";
 

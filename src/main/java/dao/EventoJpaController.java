@@ -189,9 +189,9 @@ public class EventoJpaController implements Serializable {
             em.close();
         }
     }
-    
-    public List<Evento> ordenarPorRelojLogico(){
-    EntityManager em = getEntityManager();
+
+    public List<Evento> ordenarPorRelojLogico() {
+        EntityManager em = getEntityManager();
         try {
             Query q = em.createNamedQuery("Evento.findAllOrderRL");
             List<Evento> eventos = q.getResultList();
@@ -201,17 +201,21 @@ public class EventoJpaController implements Serializable {
         }
     }
 
-    public Evento ultimoEvento(int idEmpleado) {
-    EntityManager em = getEntityManager();
-    try {
-        return em.createQuery("SELECT e FROM Evento e WHERE e.idEmpleado.idEmpleado = :id ORDER BY e.fecha DESC, e.hora DESC", Evento.class)
-                 .setParameter("id", idEmpleado)
-                 .setMaxResults(1)
-                 .getSingleResult();
-    } catch (NoResultException e) {
-        return null;
-    } finally {
-        em.close();
-    }    }
+    public Evento ultimoEvento(int idEmpleado, int idOficina) {
+        EntityManager em = getEntityManager();
+        try {
+            List<Evento> resultados = em.createQuery(
+                    "SELECT e FROM Evento e WHERE e.idEmpleado.idEmpleado = :idEmpleado AND e.idOficina.idOficina = :idOficina ORDER BY e.relojLogico DESC"
+            )
+                    .setParameter("idEmpleado", idEmpleado)
+                    .setParameter("idOficina", idOficina)
+                    .setMaxResults(1)
+                    .getResultList();
+            return resultados.isEmpty() ? null : resultados.get(0);
+
+        } finally {
+            em.close();
+        }
+    }
 
 }
